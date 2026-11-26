@@ -1,6 +1,6 @@
-
 <script setup>
 import { reactive, computed } from 'vue';
+import BeamViewer from './components/BeamViewer.vue';
 
 const beam = reactive({
   length: 6,
@@ -26,6 +26,16 @@ const result = computed(() => {
 
   return { W, q };
 });
+
+const hasValidDimensions = computed(() => {
+  return [beam.length, beam.width, beam.height].every(
+    (value) =>
+      typeof value === 'number' &&
+      Number.isFinite(value) &&
+      value > 0
+  );
+});
+
 </script>
 
 <template>
@@ -82,24 +92,17 @@ const result = computed(() => {
     </section>
 
     <section class="panel">
-      <h2>Aprēķina rezultāti</h2>
+      <h2>Sijas 3D vizualizācija</h2>
 
-      <div v-if="result" class="results">
-        <div class="result-item">
-          <span>Pretestības moments (W)</span>
-          <strong>{{ result.W.toFixed(6) }} m³</strong>
-        </div>
-
-        <div class="result-item">
-          <span>Pieļaujamā slodze (q)</span>
-          <strong class="load">
-            {{ result.q.toFixed(2) }} kN/m
-          </strong>
-        </div>
-      </div>
+      <BeamViewer
+        v-if="hasValidDimensions"
+        :length="beam.length"
+        :width="beam.width"
+        :height="beam.height"
+      />
 
       <p v-else class="error">
-        Lūdzu, ievadiet pozitīvas skaitliskās vērtības.
+        Lai redzētu 3D modeli, ievadiet derīgus sijas izmērus.
       </p>
     </section>
   </main>
